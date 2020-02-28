@@ -47,7 +47,7 @@ allprojects {
     }
 
     nexus {
-        sign = true
+        sign = false
         repositoryUrl = 'http://nexus.shuiditech.com/repository/maven-releases'
         snapshotRepositoryUrl = 'http://nexus.shuiditech.com/repository/maven-snapshots'
     }
