@@ -27,7 +27,9 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
     constructor(inputStream: InputStream, failFast: Boolean = false) :
             this(InputStreamReader(inputStream, Charsets.UTF_8), failFast)
 
+/*
     @Synchronized
+*/
     override fun hasNext(): Boolean {
         return if (state == State.Eos) {
             false
@@ -37,7 +39,9 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
         }
     }
 
+/*
     @Synchronized
+*/
     override fun next(): Point {
         return nextPoint ?: throw NoSuchElementException()
     }

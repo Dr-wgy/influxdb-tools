@@ -1,5 +1,5 @@
 group 'io.sniffy.influxdb'
-version '0.0.3'
+version '0.0.3-SNAPSHOT'
 
 buildscript {
     repositories {
@@ -44,6 +44,12 @@ allprojects {
                 }
             }
         }
+    }
+
+    nexus {
+        sign = true
+        repositoryUrl = 'http://nexus.shuiditech.com/repository/maven-releases'
+        snapshotRepositoryUrl = 'http://nexus.shuiditech.com/repository/maven-snapshots'
     }
 
 }
