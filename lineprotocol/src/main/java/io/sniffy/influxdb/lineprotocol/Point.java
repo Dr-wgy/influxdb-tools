@@ -36,6 +36,10 @@ public class Point {
         return timestamp;
     }
 
+    public Boolean isValidPoint(){
+        return !values.isEmpty();
+    }
+
     @Override
     public String toString() {
         StringWriter sw = new StringWriter();
@@ -211,14 +215,12 @@ public class Point {
         }
 
         public Point build() {
-            return values.isEmpty() ? null : new Point(
+            return  new Point(
                     measurement,
                     tags,
                     values,
                     timestamp
             );
         }
-
     }
-
 }

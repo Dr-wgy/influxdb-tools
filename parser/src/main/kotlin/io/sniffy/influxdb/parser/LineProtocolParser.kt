@@ -1,6 +1,8 @@
 package io.sniffy.influxdb.parser
 
 import io.sniffy.influxdb.lineprotocol.Point
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.*
 import java.lang.Long.parseLong
 
@@ -8,6 +10,8 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
         Iterator<Point>, Closeable {
 
     private val reader: PushbackReader
+
+    private val logger: Logger = LoggerFactory.getLogger(LineProtocolParser::class.java)
 
     init {
         this.reader = PushbackReader(reader, 1)
@@ -35,7 +39,15 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
             false
         } else {
             nextPoint = parseNext()
-            nextPoint != null
+            if(nextPoint != null && this.nextPoint!!.isValidPoint) {
+                return true
+            }
+            if(failFast) {
+                return false
+            }
+            // skip error line continue to find valid line
+            logger.warn("error line={}",nextPoint.toString())
+            return hasNext()
         }
     }
 
