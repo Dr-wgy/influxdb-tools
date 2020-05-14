@@ -19,6 +19,7 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
     private var nextPoint: Point? = null
     private var state = State.Beginning
 
+
     @JvmOverloads
     constructor(string: String, failFast: Boolean = false) :
             this(StringReader(string), failFast)
@@ -432,6 +433,8 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                                         sb.toString(),
                                         parseLong(value.substring(0, value.length - 1))
                                 )
+                            } else if (value == "+Inf" || value == "-Inf") {
+                                return ErrorInLine
                             } else {
                                 builder.addValue(
                                         sb.toString(),
@@ -465,7 +468,10 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                                                 sb.toString(),
                                                 parseLong(value.substring(0, value.length - 1))
                                         )
-                                    } else {
+                                    } else if (value == "+Inf" || value == "-Inf") {
+                                        return ErrorInLine
+                                    }
+                                    else {
                                         builder.addValue(
                                                 sb.toString(),
                                                 java.lang.Double.parseDouble(value)

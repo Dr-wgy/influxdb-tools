@@ -826,4 +826,20 @@ internal class LineProtocolParserTest {
         }
     }
 
+    @Test
+    fun parsePositiveOrNegativeInfLine() {
+        val parser = LineProtocolParser("weather,location=us-midwest temperature=+Inf 1465839830100400200")
+        val parser1 = LineProtocolParser("weather,location=us-midwest temperature=-Inf 1465839830100400200")
+        assertTrue(!parser.hasNext())
+        assertTrue(!parser1.hasNext())
+    }
+
+    @Test
+    fun parsePositiveInfManyLine() {
+
+        val parser = LineProtocolParser("weather,location=us-midwest temperature=+Inf 1465839830100400200\nweather,location=us-midwest temperature=85 1465839830100400200")
+        assertTrue(!parser.hasNext())
+        assertTrue(parser.hasNext())
+    }
+
 }
