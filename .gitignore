@@ -9,3 +9,4 @@ hs_err_pid*
 
 # Kotlin build files
 build/
+out/
