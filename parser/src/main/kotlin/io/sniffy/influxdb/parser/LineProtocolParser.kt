@@ -1,5 +1,6 @@
 package io.sniffy.influxdb.parser
 
+import com.sun.org.slf4j.internal.LoggerFactory
 import io.sniffy.influxdb.lineprotocol.Point
 import java.io.*
 import java.lang.Long.parseLong
@@ -67,6 +68,7 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
     }
 
     private enum class State {
+
 
         // TODO: support fail-fast
         // TODO: what about carriage return
