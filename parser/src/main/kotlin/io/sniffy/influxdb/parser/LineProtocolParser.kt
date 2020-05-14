@@ -19,7 +19,6 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
     private var nextPoint: Point? = null
     private var state = State.Beginning
 
-
     @JvmOverloads
     constructor(string: String, failFast: Boolean = false) :
             this(StringReader(string), failFast)
