@@ -45,6 +45,7 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
             if(failFast) {
                 return false
             }
+            // over it need't log
             if(state != State.Eos) {
                 logger.warn("error line={}",nextPoint.toString())
             }
