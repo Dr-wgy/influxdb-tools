@@ -12,12 +12,14 @@ public class Point {
     private final Map<String, String> tags;
     private final Map<String, FieldValue> values;
     private final Long timestamp;
+    private final StringBuilder errorRestLine;
 
-    public Point(String measurement, Map<String, String> tags, Map<String, FieldValue> values, Long timestamp) {
+    public Point(String measurement, Map<String, String> tags, Map<String, FieldValue> values, Long timestamp,StringBuilder errorRestLine) {
         this.measurement = measurement;
         this.tags = Collections.unmodifiableMap(tags);
         this.values = Collections.unmodifiableMap(values);
         this.timestamp = timestamp;
+        this.errorRestLine = errorRestLine;
     }
 
     public String getMeasurement() {
@@ -86,6 +88,10 @@ public class Point {
             writer.write(timestamp.toString());
         }
 
+        if(errorRestLine != null && errorRestLine.length() != 0) {
+            writer.write(errorRestLine.toString());
+        }
+
     }
 
     public static class Builder {
@@ -96,6 +102,7 @@ public class Point {
         private final Map<String, String> tags = new HashMap<>();
         private final Map<String, FieldValue> values = new HashMap<>();
         private Long timestamp;
+        private StringBuilder errorRestLine = new StringBuilder();
 
         public Builder() {
             this(false);
@@ -214,12 +221,23 @@ public class Point {
             return this;
         }
 
+        public Builder errorBuilder(char errorChar) {
+            errorRestLine.append(errorChar);
+            return this;
+        }
+
+        public Builder errorBuilder(String errorChar) {
+            errorRestLine.append(errorChar);
+            return this;
+        }
+
         public Point build() {
             return  new Point(
                     measurement,
                     tags,
                     values,
-                    timestamp
+                    timestamp,
+                    errorRestLine
             );
         }
     }

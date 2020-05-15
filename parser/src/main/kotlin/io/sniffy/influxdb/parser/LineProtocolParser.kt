@@ -445,6 +445,9 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                                         parseLong(value.substring(0, value.length - 1))
                                 )
                             } else if (value == "+Inf" || value == "-Inf") {
+                                builder.errorBuilder(sb.toString())
+                                builder.errorBuilder("=")
+                                builder.errorBuilder(sb2.toString())
                                 return ErrorInLine
                             } else {
                                 builder.addValue(
@@ -480,6 +483,10 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                                                 parseLong(value.substring(0, value.length - 1))
                                         )
                                     } else if (value == "+Inf" || value == "-Inf") {
+                                        builder.errorBuilder(sb.toString())
+                                        builder.errorBuilder("=")
+                                        builder.errorBuilder(sb2.toString())
+                                        builder.errorBuilder(i1.toChar())
                                         return ErrorInLine
                                     }
                                     else {
@@ -561,7 +568,10 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                     val c1 = i1.toChar()
                     when (c1) {
                         '\n' -> Error
-                        else -> ErrorInLine
+                        else -> {
+                            builder.errorBuilder(c1)
+                            ErrorInLine
+                        }
                     }
                 }
             }
