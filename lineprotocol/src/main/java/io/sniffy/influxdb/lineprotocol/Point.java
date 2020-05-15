@@ -58,7 +58,9 @@ public class Point {
     }
 
     public void writeTo(Writer writer) throws IOException {
-        writer.write(measurement.replace(" ", "\\ ").replace(",", "\\,"));
+        if(measurement != null) {
+            writer.write(measurement.replace(" ", "\\ ").replace(",", "\\,"));
+        }
 
         if (null != tags && !tags.isEmpty()) {
             for (Map.Entry<String, String> entry : tags.entrySet()) {
