@@ -840,4 +840,16 @@ internal class LineProtocolParserTest {
         assertTrue(parser.hasNext());
     }
 
+    @Test
+    fun parsePositiveInfManyLine1() {
+        val parser = LineProtocolParser("hystrix_execution,app=sdb-claim,event=fallback_emit,group=open-claim,host=1,key=TpaFeignClient#request(URI\\,Map\\,TpaParam),terminal=false,metric_type=counter value=0 1589521129242\n" +
+                "hystrix_execution,app=sdb-claim,event=semaphore_rejected,group=claim-auth-api,host=1,key=AccessRecordFeignClient#addAccessRecord(AccessRecordModel),terminal=false,metric_type=counter value=0 1589521129242\n" +
+                "hystrix_execution,app=sdb-claim,event=semaphore_rejected,group=sdb-api,host=1,key=InsuranceFeignClient#queryInsuranceOrderByOrderNo(String),terminal=false,metric_type=counter value=0 1589521129242\n" +
+                "hystrix_execution,app=sdb-claim,event=cancelled,group=adjustment-service,host=1,key=AdjustmentFeignClient#getPolicyData(RefreshPolicyDataDTO),terminal=true,metric_type=counter value=0 1589521129242\n")
+        while (parser.hasNext()) {
+            println(parser.next().toString())
+        }
+        //assertTrue(parser.hasNext());
+    }
+
 }
