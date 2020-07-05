@@ -47,7 +47,10 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
             }
             // step over it need't print waring log
             if(state != State.Eos) {
-                logger.warn("error line={}",nextPoint.toString())
+                val pointerStr = nextPoint.toString()
+                if(pointerStr.isNotBlank()) {
+                    logger.warn("error line={}",pointerStr)
+                }
             }
             return hasNext()
         }
