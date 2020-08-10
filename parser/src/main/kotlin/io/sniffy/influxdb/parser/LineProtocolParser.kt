@@ -192,8 +192,11 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                     val c1 = i1.toChar()
                     when (c1) {
                         '\\' -> TagKeyEscape
-                        '\n' -> Error
-                        ',', ' ' -> ErrorInLine
+                        '\n',',', ' ' -> {
+                            sb.append(c1)
+                            builder.errorBuilder(sb.toString())
+                            ErrorInLine
+                        }
                         '=' -> TagValue
                         else -> {
                             sb.append(c1)
@@ -245,6 +248,10 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                             sb.setLength(0)
                             sb2.setLength(0)
                             if (tagKey.isEmpty() || tagValue.isEmpty()) {
+                                builder.errorBuilder(tagKey)
+                                builder.errorBuilder("=")
+                                builder.errorBuilder(tagValue)
+                                builder.errorBuilder(c1)
                                 ErrorInLine // TODO: skip if fail fast
                             } else {
                                 builder.addTag(tagKey, tagValue)
