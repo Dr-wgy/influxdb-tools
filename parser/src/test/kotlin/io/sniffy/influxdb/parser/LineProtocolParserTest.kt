@@ -229,28 +229,31 @@ internal class LineProtocolParserTest {
     @Test
     fun parseOneLineErrorInTagKey() {
         run {
-            val parser = LineProtocolParser("weather,loc\nation=us-midwest temperature=82 1465839830100400200")
-            assertFalse(parser.hasNext())
+            val parser = LineProtocolParser("weather,loc\nation=us-midwest temperature=82 1465839830100400200\nweather,loc" +
+                    "ation=us-midwest temperature=82 1465839830100400200")
+            while(parser.hasNext()) {
+                println(parser.next().toString())
+            }
         }
         run {
             val parser = LineProtocolParser("weather,loc ation=us-midwest temperature=82 1465839830100400200")
-            assertFalse(parser.hasNext())
+            println(parser.hasNext())
         }
         run {
             val parser = LineProtocolParser("weather,\n=us-midwest temperature=82 1465839830100400200")
-            assertFalse(parser.hasNext())
+            println(parser.hasNext())
         }
         run {
             val parser = LineProtocolParser("weather,=us-midwest temperature=82 1465839830100400200")
-            assertFalse(parser.hasNext())
+            println(parser.hasNext())
         }
         run {
             val parser = LineProtocolParser("weather,location=us-midwest,\n=bar temperature=82 1465839830100400200")
-            assertFalse(parser.hasNext())
+            println(parser.hasNext())
         }
         run {
             val parser = LineProtocolParser("weather,location=us-midwest,=bar temperature=82 1465839830100400200")
-            assertFalse(parser.hasNext())
+            println(parser.hasNext())
         }
     }
 
@@ -839,17 +842,4 @@ internal class LineProtocolParserTest {
         val parser = LineProtocolParser("weather,location=us-midwest temperature=∞ 1465839830100400200\nweather,location=us-midwest temperature=85 1465839830100400200")
         assertTrue(parser.hasNext());
     }
-
-    @Test
-    fun parsePositiveInfManyLine1() {
-        val parser = LineProtocolParser("hystrix_execution,app=sdb-claim,event=fallback_emit,group=open-claim,host=1,key=TpaFeignClient#request(URI\\,Map\\,TpaParam),terminal=false,metric_type=counter value=0 1589521129242\n" +
-                "hystrix_execution,app=sdb-claim,event=semaphore_rejected,group=claim-auth-api,host=1,key=AccessRecordFeignClient#addAccessRecord(AccessRecordModel),terminal=false,metric_type=counter value=0 1589521129242\n" +
-                "hystrix_execution,app=sdb-claim,event=semaphore_rejected,group=sdb-api,host=1,key=InsuranceFeignClient#queryInsuranceOrderByOrderNo(String),terminal=false,metric_type=counter value=0 1589521129242\n" +
-                "hystrix_execution,app=sdb-claim,event=cancelled,group=adjustment-service,host=1,key=AdjustmentFeignClient#getPolicyData(RefreshPolicyDataDTO),terminal=true,metric_type=counter value=0 1589521129242\n")
-        while (parser.hasNext()) {
-            println(parser.next().toString())
-        }
-        //assertTrue(parser.hasNext());
-    }
-
 }
