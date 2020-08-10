@@ -1,6 +1,8 @@
 package io.sniffy.influxdb.parser
 
 import io.sniffy.influxdb.lineprotocol.Point
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.*
 import java.lang.Long.parseLong
 
@@ -8,6 +10,8 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
         Iterator<Point>, Closeable {
 
     private val reader: PushbackReader
+
+    private val logger: Logger = LoggerFactory.getLogger(LineProtocolParser::class.java)
 
     init {
         this.reader = PushbackReader(reader, 1)
@@ -35,7 +39,20 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
             false
         } else {
             nextPoint = parseNext()
-            nextPoint != null
+            if(nextPoint != null && this.nextPoint!!.isValidPoint) {
+                return true
+            }
+            if(failFast) {
+                return false
+            }
+            // step over it need't print waring log
+            if(state != State.Eos) {
+                val pointerStr = nextPoint.toString()
+                if(pointerStr.isNotBlank()) {
+                    logger.warn("error line={}",pointerStr)
+                }
+            }
+            return hasNext()
         }
     }
 
@@ -175,8 +192,11 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                     val c1 = i1.toChar()
                     when (c1) {
                         '\\' -> TagKeyEscape
-                        '\n' -> Error
-                        ',', ' ' -> ErrorInLine
+                        '\n',',', ' ' -> {
+                            sb.append(c1)
+                            builder.errorBuilder(sb.toString())
+                            ErrorInLine
+                        }
                         '=' -> TagValue
                         else -> {
                             sb.append(c1)
@@ -228,6 +248,10 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                             sb.setLength(0)
                             sb2.setLength(0)
                             if (tagKey.isEmpty() || tagValue.isEmpty()) {
+                                builder.errorBuilder(tagKey)
+                                builder.errorBuilder("=")
+                                builder.errorBuilder(tagValue)
+                                builder.errorBuilder(c1)
                                 ErrorInLine // TODO: skip if fail fast
                             } else {
                                 builder.addTag(tagKey, tagValue)
@@ -432,6 +456,11 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                                         sb.toString(),
                                         parseLong(value.substring(0, value.length - 1))
                                 )
+                            } else if (value == "+Inf" || value == "-Inf" || value == "∞") {
+                                builder.errorBuilder(sb.toString())
+                                builder.errorBuilder("=")
+                                builder.errorBuilder(sb2.toString())
+                                return ErrorInLine
                             } else {
                                 builder.addValue(
                                         sb.toString(),
@@ -465,7 +494,14 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                                                 sb.toString(),
                                                 parseLong(value.substring(0, value.length - 1))
                                         )
-                                    } else {
+                                    } else if (value == "+Inf" || value == "-Inf" || value == "∞") {
+                                        builder.errorBuilder(sb.toString())
+                                        builder.errorBuilder("=")
+                                        builder.errorBuilder(sb2.toString())
+                                        builder.errorBuilder(i1.toChar())
+                                        return ErrorInLine
+                                    }
+                                    else {
                                         builder.addValue(
                                                 sb.toString(),
                                                 java.lang.Double.parseDouble(value)
@@ -544,7 +580,10 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                     val c1 = i1.toChar()
                     when (c1) {
                         '\n' -> Error
-                        else -> ErrorInLine
+                        else -> {
+                            builder.errorBuilder(c1)
+                            ErrorInLine
+                        }
                     }
                 }
             }

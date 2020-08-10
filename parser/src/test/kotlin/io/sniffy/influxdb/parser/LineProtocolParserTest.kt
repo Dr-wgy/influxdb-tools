@@ -229,28 +229,31 @@ internal class LineProtocolParserTest {
     @Test
     fun parseOneLineErrorInTagKey() {
         run {
-            val parser = LineProtocolParser("weather,loc\nation=us-midwest temperature=82 1465839830100400200")
-            assertFalse(parser.hasNext())
+            val parser = LineProtocolParser("weather,loc\nation=us-midwest temperature=82 1465839830100400200\nweather,loc" +
+                    "ation=us-midwest temperature=82 1465839830100400200")
+            while(parser.hasNext()) {
+                println(parser.next().toString())
+            }
         }
         run {
             val parser = LineProtocolParser("weather,loc ation=us-midwest temperature=82 1465839830100400200")
-            assertFalse(parser.hasNext())
+            println(parser.hasNext())
         }
         run {
             val parser = LineProtocolParser("weather,\n=us-midwest temperature=82 1465839830100400200")
-            assertFalse(parser.hasNext())
+            println(parser.hasNext())
         }
         run {
             val parser = LineProtocolParser("weather,=us-midwest temperature=82 1465839830100400200")
-            assertFalse(parser.hasNext())
+            println(parser.hasNext())
         }
         run {
             val parser = LineProtocolParser("weather,location=us-midwest,\n=bar temperature=82 1465839830100400200")
-            assertFalse(parser.hasNext())
+            println(parser.hasNext())
         }
         run {
             val parser = LineProtocolParser("weather,location=us-midwest,=bar temperature=82 1465839830100400200")
-            assertFalse(parser.hasNext())
+            println(parser.hasNext())
         }
     }
 
@@ -826,4 +829,17 @@ internal class LineProtocolParserTest {
         }
     }
 
+    @Test
+    fun parsePositiveOrNegativeInfLine() {
+        val parser = LineProtocolParser("weather,location=us-midwest temperature=+Inf 1465839830100400200")
+        val parser1 = LineProtocolParser("weather,location=us-midwest temperature=-Inf 1465839830100400200")
+        assertTrue(!parser.hasNext())
+        assertTrue(!parser1.hasNext())
+    }
+
+    @Test
+    fun parsePositiveInfManyLine() {
+        val parser = LineProtocolParser("weather,location=us-midwest temperature=∞ 1465839830100400200\nweather,location=us-midwest temperature=85 1465839830100400200")
+        assertTrue(parser.hasNext());
+    }
 }

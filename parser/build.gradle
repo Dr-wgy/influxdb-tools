@@ -1,5 +1,5 @@
 group 'io.sniffy.influxdb'
-version '0.0.4'
+version '0.0.5'
 
 buildscript {
     ext.kotlin_version = '1.2.30'
@@ -29,8 +29,10 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     compile project(':lineprotocol')
+    compile "ch.qos.logback:logback-classic:1.2.3"
 
-    testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+
+  testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
     testCompile "ru.yandex.qatools.allure:allure-java-annotations:1.5.1"
 

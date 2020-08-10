@@ -12,12 +12,14 @@ public class Point {
     private final Map<String, String> tags;
     private final Map<String, FieldValue> values;
     private final Long timestamp;
+    private final StringBuilder errorRestLine;
 
-    public Point(String measurement, Map<String, String> tags, Map<String, FieldValue> values, Long timestamp) {
+    public Point(String measurement, Map<String, String> tags, Map<String, FieldValue> values, Long timestamp,StringBuilder errorRestLine) {
         this.measurement = measurement;
         this.tags = Collections.unmodifiableMap(tags);
         this.values = Collections.unmodifiableMap(values);
         this.timestamp = timestamp;
+        this.errorRestLine = errorRestLine;
     }
 
     public String getMeasurement() {
@@ -36,6 +38,10 @@ public class Point {
         return timestamp;
     }
 
+    public Boolean isValidPoint(){
+        return !values.isEmpty();
+    }
+
     @Override
     public String toString() {
         StringWriter sw = new StringWriter();
@@ -52,7 +58,9 @@ public class Point {
     }
 
     public void writeTo(Writer writer) throws IOException {
-        writer.write(measurement.replace(" ", "\\ ").replace(",", "\\,"));
+        if(measurement != null) {
+            writer.write(measurement.replace(" ", "\\ ").replace(",", "\\,"));
+        }
 
         if (null != tags && !tags.isEmpty()) {
             for (Map.Entry<String, String> entry : tags.entrySet()) {
@@ -82,6 +90,10 @@ public class Point {
             writer.write(timestamp.toString());
         }
 
+        if(errorRestLine != null && errorRestLine.length() != 0) {
+            writer.write(errorRestLine.toString());
+        }
+
     }
 
     public static class Builder {
@@ -92,6 +104,7 @@ public class Point {
         private final Map<String, String> tags = new HashMap<>();
         private final Map<String, FieldValue> values = new HashMap<>();
         private Long timestamp;
+        private StringBuilder errorRestLine = new StringBuilder();
 
         public Builder() {
             this(false);
@@ -210,15 +223,24 @@ public class Point {
             return this;
         }
 
+        public Builder errorBuilder(char errorChar) {
+            errorRestLine.append(errorChar);
+            return this;
+        }
+
+        public Builder errorBuilder(String errorChar) {
+            errorRestLine.append(errorChar);
+            return this;
+        }
+
         public Point build() {
-            return values.isEmpty() ? null : new Point(
+            return  new Point(
                     measurement,
                     tags,
                     values,
-                    timestamp
+                    timestamp,
+                    errorRestLine
             );
         }
-
     }
-
 }
