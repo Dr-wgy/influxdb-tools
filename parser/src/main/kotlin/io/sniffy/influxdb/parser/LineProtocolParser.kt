@@ -1,6 +1,6 @@
-package com.shuidihuzhu.monitoring.influxdb.parser
+package io.sniffy.influxdb.parser
 
-import com.shuidihuzhu.monitoring.influxdb.lineprotocol.Point
+import io.sniffy.influxdb.lineprotocol.Point
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.*
