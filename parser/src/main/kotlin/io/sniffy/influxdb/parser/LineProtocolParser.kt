@@ -31,9 +31,9 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
     constructor(inputStream: InputStream, failFast: Boolean = false) :
             this(InputStreamReader(inputStream, Charsets.UTF_8), failFast)
 
-/*
-    @Synchronized
-*/
+    /*
+        @Synchronized
+    */
     override fun hasNext(): Boolean {
         return if (state == State.Eos) {
             false
@@ -56,9 +56,9 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
         }
     }
 
-/*
-    @Synchronized
-*/
+    /*
+        @Synchronized
+    */
     override fun next(): Point {
         return nextPoint ?: throw NoSuchElementException()
     }
@@ -258,7 +258,11 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                                 if (',' == c1) TagKey else FieldKeySeparator
                             }
                         }
-                        '\n' -> Error
+                        '\n' -> {
+                            sb.append(c1)
+                            builder.errorBuilder(sb.toString())
+                            ErrorInLine
+                        }
                         '=' -> {
                             ErrorInLine
                         }
@@ -462,10 +466,18 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                                 builder.errorBuilder(sb2.toString())
                                 return ErrorInLine
                             } else {
+                                val a:Double? = try {
+                                    java.lang.Double.parseDouble(value)
+                                }catch (e: NumberFormatException) {
+                                    null
+                                }
+                                if(a == null) {
+                                    builder.errorBuilder(sb2.toString());
+                                    return ErrorInLine
+                                }
                                 builder.addValue(
                                         sb.toString(),
-                                        java.lang.Double.parseDouble(value)
-                                )
+                                        a)
                             }
                         }
                     }
@@ -502,9 +514,18 @@ class LineProtocolParser(reader: Reader, private val failFast: Boolean = false) 
                                         return ErrorInLine
                                     }
                                     else {
+                                        val a:Double? = try {
+                                            java.lang.Double.parseDouble(value)
+                                        }catch (e: NumberFormatException) {
+                                            null
+                                        }
+                                        if(a == null) {
+                                            builder.errorBuilder(sb2.toString());
+                                            return ErrorInLine
+                                        }
                                         builder.addValue(
                                                 sb.toString(),
-                                                java.lang.Double.parseDouble(value)
+                                                a
                                         )
                                     }
                                 }

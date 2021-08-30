@@ -842,4 +842,12 @@ internal class LineProtocolParserTest {
         val parser = LineProtocolParser("weather,location=us-midwest temperature=∞ 1465839830100400200\nweather,location=us-midwest temperature=85 1465839830100400200")
         assertTrue(parser.hasNext());
     }
+
+    @Test
+    fun parsePositiveInNumberFormatException() {
+        val parser = LineProtocolParser("weather,location=us-midwest temperature=4mean=∞ 1465839830100400200\nweather,location=us-midwest temperature=85 1465839830100400200")
+        assertTrue(parser.hasNext());
+        val next = parser.next();
+
+    }
 }
