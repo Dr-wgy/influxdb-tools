@@ -48,8 +48,8 @@ allprojects {
 
     nexus {
         sign = false
-        repositoryUrl = 'http://nexus.shuiditech.com/repository/maven-releases'
-        snapshotRepositoryUrl = 'http://nexus.shuiditech.com/repository/maven-snapshots'
+        repositoryUrl = 'http://xxxxxxxxx/repository/maven-releases'
+        snapshotRepositoryUrl = 'http://xxxxxxxx/repository/maven-snapshots'
     }
 
 }

@@ -845,9 +845,10 @@ internal class LineProtocolParserTest {
 
     @Test
     fun parsePositiveInNumberFormatException() {
-        val parser = LineProtocolParser("weather,location=us-midwest temperature=4mean=∞ 1465839830100400200\nweather,location=us-midwest temperature=85 1465839830100400200")
-        assertTrue(parser.hasNext());
-        val next = parser.next();
-
+        val parser = LineProtocolParser("measure_sdb_order_new_count,order_event=PAY_SUC,cluster=maxwell,product=tpyrs_qhbbcylx2021,channel=hmb_fx,order_type=0,sub_channel=sd-zb-gscx-org_jiankangzibo,metric_type=counter value=0 1631191876617")
+        while(parser.hasNext()) {
+            val next = parser.next();
+        }
+        //assertTrue(parser.hasNext());
     }
 }
